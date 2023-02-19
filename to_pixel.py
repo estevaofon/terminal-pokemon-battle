@@ -64,39 +64,40 @@ def main(stdscr):
                 else:
                     color = 0
                 stdscr.addstr(y+y_pos, x+x_pos, "\u2588", curses.color_pair(color))
-
+    size_x_white = 110
+    size_y_white = 30
         # Refresh the screen
     def idle_animation(stdscr):
-        draw_image(stdscr, "charmander.png", 0, 20)
+        draw_image(stdscr, "charmander.png", 0, 10)
         stdscr.refresh()
         time.sleep(0.3)
-        draw_image(stdscr, "charmander.png", 0, 19)
+        draw_image(stdscr, "charmander.png", 0, 9)
         stdscr.refresh()
         time.sleep(0.3)
 
     def atack_animation(stdscr):
-        draw_image(stdscr, "white.png", 0, 0, size_x=70, size_y=40)
-        draw_image(stdscr, "charmander.png", 10, 20)
+        draw_image(stdscr, "white.png", 0, 0, size_x=size_x_white, size_y=size_y_white)
+        draw_image(stdscr, "charmander.png", 10, 10)
         stdscr.refresh()
         time.sleep(0.1)
-        draw_image(stdscr, "white.png", 0, 0, size_x=70, size_y=40)
-        draw_image(stdscr, "charmander.png", 0, 20)
+        draw_image(stdscr, "white.png", 0, 0, size_x=size_x_white, size_y=size_y_white)
+        draw_image(stdscr, "charmander.png", 0, 10)
         stdscr.refresh()
 
     def atack_animation_enemy(stdscr):
-        draw_image(stdscr, "white.png", 0, 0, size_x=70, size_y=40)
-        draw_image(stdscr, "bulbinha.png", 30, 0, size_x=30, size_y=20)
+        draw_image(stdscr, "white.png", 0, 0, size_x=size_x_white, size_y=size_y_white)
+        draw_image(stdscr, "bulbinha.png", 60, 0, size_x=30, size_y=20)
         stdscr.refresh()
         time.sleep(0.1)
-        draw_image(stdscr, "white.png", 0, 0, size_x=70, size_y=40)
-        draw_image(stdscr, "bulbinha.png", 40, 0, size_x=30, size_y=20)
+        draw_image(stdscr, "white.png", 0, 0, size_x=size_x_white, size_y=size_y_white)
+        draw_image(stdscr, "bulbinha.png", 70, 0, size_x=30, size_y=20)
         stdscr.refresh()
 
     x = 0
-    draw_image(stdscr, "white.png", 0, 0, size_x=70, size_y=40)
+    draw_image(stdscr, "white.png", 0, 0, size_x=size_x_white, size_y=size_y_white)
     while True:
         idle_animation(stdscr)
-        draw_image(stdscr, "bulbinha.png", 40, x, size_x=30, size_y=20)
+        draw_image(stdscr, "bulbinha.png", 70, x, size_x=30, size_y=20)
 
         stdscr.nodelay(True)
         c = stdscr.getch()
