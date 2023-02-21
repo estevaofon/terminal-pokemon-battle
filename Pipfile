@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 windows-curses = "*"
 pillow = "*"
+pygame = "*"
 
 [dev-packages]
 

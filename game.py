@@ -26,11 +26,20 @@ class Pokemon:
         return f"{self.name} - HP: {self.hp} - ATK: {self.atk}"
 
 
+def play_music():
+    import pygame
+    pygame.init()
+    pygame.mixer.music.load("song.mp3")
+    pygame.mixer.music.play(-1)
+
+
 def main(stdscr):
     # Load the image file
     option = 0
     size_x_white = 110
     size_y_white = 30
+
+    play_music()
 
     def draw_image(stdscr, img_file, x_pos, y_pos, size_x=50, size_y=20):
         img = Image.open(img_file)
@@ -174,6 +183,8 @@ def main(stdscr):
         elif c == ord('q'):
             import sys
             sys.exit(0)
+
+        # player turn
         if (c == curses.KEY_ENTER or c == 10 or c == 13) and option == 0 and current_pokemon == charmander:
             attack_animation(stdscr)
             charmander.attack(bulbasaur)
@@ -183,6 +194,7 @@ def main(stdscr):
             draw_growl(stdscr, 60, 0)
             moved = True
 
+        # enemy turn
         if current_pokemon == bulbasaur and moved:
             if random.randint(0, 10) > 7:
                 draw_growl(stdscr, 0, 10)
@@ -204,6 +216,7 @@ def main(stdscr):
         draw_status(stdscr, charmander, 60, 22)
         attack_options(stdscr, charmander, 60, 25)
 
+        # check if pokemon fainted
         if bulbasaur.hp <= 0:
             draw_image(stdscr, "white.png", 0, 0, size_x=size_x_white, size_y=size_y_white)
             idle_animation(stdscr)
