@@ -1,6 +1,7 @@
 import curses
 from PIL import Image
 import time
+import random
 
 attack_animation_bool = False
 class Pokemon:
@@ -14,6 +15,11 @@ class Pokemon:
 
     def attack(self, enemy):
         enemy.hp -= self.atk
+
+    def growl(self, enemy):
+        enemy.atk -= 1
+        if enemy.atk < 0:
+            enemy.atk = 0
 
     def __str__(self):
         return f"{self.name} - HP: {self.hp} - ATK: {self.atk} - DEF: {self.defense} - SPD: {self.speed}"
@@ -123,6 +129,12 @@ def main(stdscr):
         stdscr.addstr(y-1, x+17, f"Lv{pokemon.level}", curses.color_pair(9))
         stdscr.addstr(y+1, x+13, f"{pokemon.hp}/{pokemon.hp_max}", curses.color_pair(9))
 
+    def draw_growl(stdscr, x, y):
+        draw_image(stdscr, "white.png", 0, 0, size_x=size_x_white, size_y=size_y_white)
+        draw_image(stdscr, "growl.png", x, y, size_x=30, size_y=20)
+        stdscr.refresh()
+        time.sleep(0.1)
+
     def attack_options(stdscr, pokemon, x, y):
         stdscr.addstr(y+1, x, "TACLKE", curses.color_pair(9))
         stdscr.addstr(y+1, x+10, "GROWL", curses.color_pair(9))
@@ -145,8 +157,10 @@ def main(stdscr):
     x = 0
     draw_image(stdscr, "white.png", 0, 0, size_x=size_x_white, size_y=size_y_white)
 
-    bulbasaur = Pokemon("Bulbasaur", 100, 10, 15)
-    charmander = Pokemon("Charmander", 100, 11, 9)
+    bulbasaur = Pokemon("Bulbasaur", 100, 10, 10)
+    charmander = Pokemon("Charmander", 100, 10, 10)
+    current_pokemon = bulbasaur
+    moved = False
     while True:
         idle_animation(stdscr)
         draw_image(stdscr, "bulbinha.png", 70, x, size_x=30, size_y=20)
@@ -154,32 +168,57 @@ def main(stdscr):
         stdscr.nodelay(True)
         c = stdscr.getch()
 
-        if c == ord('x'):
-            x += 10
-            stdscr.clear()
-        if c == ord('z'):
-            x -= 10
-            stdscr.clear()
-        if c == ord('f'):
-            atack_animation(stdscr)
-            charmander.attack(bulbasaur)
         if c == ord('g'):
             atack_animation_enemy(stdscr)
 
         elif c == ord('q'):
             import sys
             sys.exit(0)
-        if (c == curses.KEY_ENTER or c == 10 or c == 13) and option == 0:
+        if (c == curses.KEY_ENTER or c == 10 or c == 13) and option == 0 and current_pokemon == charmander:
             atack_animation(stdscr)
             charmander.attack(bulbasaur)
+            moved = True
+        elif (c == curses.KEY_ENTER or c == 10 or c == 13) and option == 1 and current_pokemon == charmander:
+            charmander.growl(bulbasaur)
+            draw_growl(stdscr, 60, 0)
+            moved = True
 
+        if current_pokemon == bulbasaur and moved:
+            if random.randint(0, 10) > 7:
+                draw_growl(stdscr, 0, 10)
+                bulbasaur.growl(charmander)
+                time.sleep(0.3)
+            else:
+                atack_animation_enemy(stdscr)
+                bulbasaur.attack(charmander)
+            moved = False
+
+        # change turn
+        if moved:
+            current_pokemon = bulbasaur
+        else:
+            current_pokemon = charmander
 
         draw_hp_bar(stdscr, bulbasaur.hp, 30, 5)
-        #draw_hp_bar(stdscr, charmander.hp, 60, 22)
-        #draw_name(stdscr, bulbasaur.name, 30, 4)
         draw_status(stdscr, bulbasaur, 30, 5)
         draw_status(stdscr, charmander, 60, 22)
         attack_options(stdscr, charmander, 60, 25)
+
+
+
+        if bulbasaur.hp <= 0:
+            draw_image(stdscr, "white.png", 0, 0, size_x=size_x_white, size_y=size_y_white)
+            idle_animation(stdscr)
+            stdscr.addstr(20, 60, f"{bulbasaur.name.upper()} FAINTED", curses.color_pair(9))
+            stdscr.refresh()
+            time.sleep(10)
+            #break
+        elif charmander.hp <= 0:
+            draw_image(stdscr, "white.png", 0, 0, size_x=size_x_white, size_y=size_y_white)
+            draw_image(stdscr, "bulbinha.png", 70, x, size_x=30, size_y=20)
+            stdscr.addstr(20, 60, f"{charmander.name.upper()} FAINTED", curses.color_pair(9))
+            stdscr.refresh()
+            time.sleep(10)
 
 
 if __name__ == "__main__":
