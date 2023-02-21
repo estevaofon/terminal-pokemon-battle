@@ -226,7 +226,7 @@ def main(stdscr):
             # break
         elif charmander.hp <= 0:
             draw_image(stdscr, "white.png", 0, 0, size_x=size_x_white, size_y=size_y_white)
-            draw_image(stdscr, "bulbinha.png", 70, x, size_x=30, size_y=20)
+            draw_image(stdscr, "bulbinha.png", 70, 0, size_x=30, size_y=20)
             stdscr.addstr(20, 60, f"{charmander.name.upper()} FAINTED", curses.color_pair(9))
             stdscr.refresh()
             time.sleep(10)
