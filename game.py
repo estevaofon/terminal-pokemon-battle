@@ -3,7 +3,7 @@ from PIL import Image
 import time
 import random
 
-attack_animation_bool = False
+
 class Pokemon:
     def __init__(self, name, hp, atk, defense, level=5, hp_max=100, speed=10):
         self.name = name
@@ -16,17 +16,22 @@ class Pokemon:
     def attack(self, enemy):
         enemy.hp -= self.atk
 
-    def growl(self, enemy):
+    @staticmethod
+    def growl(enemy):
         enemy.atk -= 1
         if enemy.atk < 0:
             enemy.atk = 0
 
     def __str__(self):
-        return f"{self.name} - HP: {self.hp} - ATK: {self.atk} - DEF: {self.defense} - SPD: {self.speed}"
+        return f"{self.name} - HP: {self.hp} - ATK: {self.atk}"
+
+
 def main(stdscr):
     # Load the image file
-    #curses.use_default_colors()
     option = 0
+    size_x_white = 110
+    size_y_white = 30
+
     def draw_image(stdscr, img_file, x_pos, y_pos, size_x=50, size_y=20):
         img = Image.open(img_file)
         curses.start_color()
@@ -67,27 +72,27 @@ def main(stdscr):
                     (r, g, b, _) = pixel
 
                 if r >= 150 and g >= 150 and b >= 150:
-                    color = 7 # White
+                    color = 7  # White
                 elif r >= 128 and g >= 128 and b < 50:
-                    color = 3 # Yellow
+                    color = 3  # Yellow
                 elif r >= 128 and b >= 128 and g < 50:
-                    color = 5 # Magenta
+                    color = 5  # Magenta
                 elif g >= 128 and b >= 128:
-                    color = 6 # Cyan
+                    color = 6  # Cyan
                 elif r >= 128:
-                    color = 1 # Red
+                    color = 1  # Red
                 elif g >= 128:
-                    color = 2 # Green
+                    color = 2  # Green
                 elif b >= 128:
-                    color = 4 # Blue
+                    color = 4  # Blue
                 elif r < 100 and g < 100 and b < 100:
                     color = 8
                 else:
                     color = 0
-                stdscr.addstr(y+y_pos, x+x_pos, "\u2588", curses.color_pair(color))
-    size_x_white = 110
-    size_y_white = 30
+                stdscr.addstr(y + y_pos, x + x_pos, "\u2588", curses.color_pair(color))
+
         # Refresh the screen
+
     def idle_animation(stdscr):
         draw_image(stdscr, "charmander.png", 0, 10)
         stdscr.refresh()
@@ -96,7 +101,7 @@ def main(stdscr):
         stdscr.refresh()
         time.sleep(0.3)
 
-    def atack_animation(stdscr):
+    def attack_animation(stdscr):
         draw_image(stdscr, "white.png", 0, 0, size_x=size_x_white, size_y=size_y_white)
         draw_image(stdscr, "charmander.png", 10, 10)
         stdscr.refresh()
@@ -105,8 +110,7 @@ def main(stdscr):
         draw_image(stdscr, "charmander.png", 0, 10)
         stdscr.refresh()
 
-
-    def atack_animation_enemy(stdscr):
+    def attack_animation_enemy(stdscr):
         draw_image(stdscr, "white.png", 0, 0, size_x=size_x_white, size_y=size_y_white)
         draw_image(stdscr, "bulbinha.png", 60, 0, size_x=30, size_y=20)
         stdscr.refresh()
@@ -121,13 +125,13 @@ def main(stdscr):
         hp_bar += str(hp)
         hp_bar += "/"
         color = 2
-        stdscr.addstr(y, x, "\u2588"*(hp//10)*2, curses.color_pair(color))
+        stdscr.addstr(y, x, "\u2588" * (hp // 10) * 2, curses.color_pair(color))
 
     def draw_status(stdscr, pokemon, x, y):
-        stdscr.addstr(y-1, x-2, pokemon.name.upper(), curses.color_pair(9))
+        stdscr.addstr(y - 1, x - 2, pokemon.name.upper(), curses.color_pair(9))
         draw_hp_bar(stdscr, pokemon.hp, x, y)
-        stdscr.addstr(y-1, x+17, f"Lv{pokemon.level}", curses.color_pair(9))
-        stdscr.addstr(y+1, x+13, f"{pokemon.hp}/{pokemon.hp_max}", curses.color_pair(9))
+        stdscr.addstr(y - 1, x + 17, f"Lv{pokemon.level}", curses.color_pair(9))
+        stdscr.addstr(y + 1, x + 13, f"{pokemon.hp}/{pokemon.hp_max}", curses.color_pair(9))
 
     def draw_growl(stdscr, x, y):
         draw_image(stdscr, "white.png", 0, 0, size_x=size_x_white, size_y=size_y_white)
@@ -136,8 +140,8 @@ def main(stdscr):
         time.sleep(0.1)
 
     def attack_options(stdscr, pokemon, x, y):
-        stdscr.addstr(y+1, x, "TACLKE", curses.color_pair(9))
-        stdscr.addstr(y+1, x+10, "GROWL", curses.color_pair(9))
+        stdscr.addstr(y + 1, x, "TACLKE", curses.color_pair(9))
+        stdscr.addstr(y + 1, x + 10, "GROWL", curses.color_pair(9))
         nonlocal option
 
         if c == curses.KEY_RIGHT:
@@ -152,30 +156,26 @@ def main(stdscr):
             stdscr.addstr(y + 1, x - 2, " ", curses.color_pair(9))
             stdscr.addstr(y + 1, x + 8, ">", curses.color_pair(9))
 
-
-
-    x = 0
     draw_image(stdscr, "white.png", 0, 0, size_x=size_x_white, size_y=size_y_white)
-
     bulbasaur = Pokemon("Bulbasaur", 100, 10, 10)
     charmander = Pokemon("Charmander", 100, 10, 10)
     current_pokemon = bulbasaur
     moved = False
+
     while True:
         idle_animation(stdscr)
-        draw_image(stdscr, "bulbinha.png", 70, x, size_x=30, size_y=20)
-
+        draw_image(stdscr, "bulbinha.png", 70, 0, size_x=30, size_y=20)
         stdscr.nodelay(True)
         c = stdscr.getch()
 
         if c == ord('g'):
-            atack_animation_enemy(stdscr)
+            attack_animation_enemy(stdscr)
 
         elif c == ord('q'):
             import sys
             sys.exit(0)
         if (c == curses.KEY_ENTER or c == 10 or c == 13) and option == 0 and current_pokemon == charmander:
-            atack_animation(stdscr)
+            attack_animation(stdscr)
             charmander.attack(bulbasaur)
             moved = True
         elif (c == curses.KEY_ENTER or c == 10 or c == 13) and option == 1 and current_pokemon == charmander:
@@ -189,7 +189,7 @@ def main(stdscr):
                 bulbasaur.growl(charmander)
                 time.sleep(0.3)
             else:
-                atack_animation_enemy(stdscr)
+                attack_animation_enemy(stdscr)
                 bulbasaur.attack(charmander)
             moved = False
 
@@ -204,15 +204,13 @@ def main(stdscr):
         draw_status(stdscr, charmander, 60, 22)
         attack_options(stdscr, charmander, 60, 25)
 
-
-
         if bulbasaur.hp <= 0:
             draw_image(stdscr, "white.png", 0, 0, size_x=size_x_white, size_y=size_y_white)
             idle_animation(stdscr)
             stdscr.addstr(20, 60, f"{bulbasaur.name.upper()} FAINTED", curses.color_pair(9))
             stdscr.refresh()
             time.sleep(10)
-            #break
+            # break
         elif charmander.hp <= 0:
             draw_image(stdscr, "white.png", 0, 0, size_x=size_x_white, size_y=size_y_white)
             draw_image(stdscr, "bulbinha.png", 70, x, size_x=30, size_y=20)
